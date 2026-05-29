@@ -6,6 +6,8 @@ export function useMenuToggle(keyCode, disabled = false) {
   useEffect(() => {
     function onKey(e) {
       if (disabled) return;
+      const el = e.target;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) return;
       if (e.code === keyCode) {
         e.preventDefault();
         e.stopPropagation();

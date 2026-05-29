@@ -141,7 +141,10 @@ export const polyfly = {
   },
 
   installControls() {
+    const editable = el =>
+      !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
     addEventListener("keydown", event => {
+      if (editable(event.target)) return;
       const wasDown = state.keys[event.code];
       state.keys[event.code] = true;
       if (wasDown) return;
