@@ -8843,11 +8843,8 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
           "input",
           {
-            type: "number",
+            type: "text",
             inputMode: "decimal",
-            min,
-            max,
-            step,
             value: text,
             onPointerDown: (e) => e.stopPropagation(),
             onMouseDown: (e) => e.stopPropagation(),

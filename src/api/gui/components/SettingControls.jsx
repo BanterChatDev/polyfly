@@ -39,11 +39,8 @@ export function SettingSlider({ featureName, settingKey, def, value }) {
       <div className="flex justify-between items-center mb-1.5 text-[12px] text-pf-text-dim">
         <span>{def.label || settingKey}</span>
         <input
-          type="number"
+          type="text"
           inputMode="decimal"
-          min={min}
-          max={max}
-          step={step}
           value={text}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
