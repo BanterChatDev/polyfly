@@ -14,6 +14,14 @@ function patchAndInject(url) {
     }
     src = src.replaceAll(find, replace);
   }
+  const publicPath = url.replace(/\/[^/]+$/, "/");
+  const ppFind = '.replace(/\\/[^\\/]+$/,"/")';
+  const ppRepl = '.replace(/\\/[^\\/]+$/,"/").replace(/^[\\s\\S]*$/,' + JSON.stringify(publicPath) + ')';
+  if (src.includes(ppFind)) {
+    src = src.replaceAll(ppFind, ppRepl);
+  } else {
+    console.error("[polyfly/main] publicPath anchor not found");
+  }
   const blobUrl = URL.createObjectURL(new Blob([src], { type: "application/javascript" }));
   const s = document.createElement("script");
   s.src = blobUrl;
