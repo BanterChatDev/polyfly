@@ -7983,8 +7983,7 @@
   };
   var STOCK = {
     engineForce: 4e3,
-    friction: 3,
-    yawLockSpeed: 4e3
+    friction: 3
   };
 
   // src/api/physics.js
@@ -9220,7 +9219,6 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
   };
 
   // src/features/mach.js
-  var YAW_LOCK_SPEED_SQ = (STOCK.yawLockSpeed / 3.6) ** 2;
   var mach = {
     name: "mach",
     label: "Mach",
@@ -9229,18 +9227,20 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
     toggleKey: KEYS.mach,
     settings: {
       mult: { type: "number", label: "Speed multiplier", min: 1, max: 250, step: 0.1, default: 2.5 },
-      antiFlip: { type: "bool", label: "Anti-flip", default: true }
+      antiFlip: { type: "bool", label: "Anti-flip", default: true },
+      yawLockSpeed: { type: "number", label: "Yaw-lock speed (km/h)", min: 0, max: 5e4, step: 100, default: 4e3 }
     },
     wasm: {
       requires: [WASM_EXPORTS.engineForceMach],
       compute(state2) {
-        const m = state2.mach || { active: false, mult: 1, antiFlip: true };
+        const m = state2.mach || { active: false, mult: 1, antiFlip: true, yawLockSpeed: 4e3 };
         const force = m.active ? STOCK.engineForce * (Number(m.mult) || 1) : STOCK.engineForce;
         const flip = m.active && m.antiFlip ? 1 : 0;
+        const yls = m.active && m.antiFlip ? ((Number(m.yawLockSpeed) || 0) / 3.6) ** 2 : Infinity;
         return {
           [WASM_EXPORTS.engineForceMach]: force,
           [WASM_EXPORTS.antiFlip]: flip,
-          [WASM_EXPORTS.yawLockSpeedSq]: YAW_LOCK_SPEED_SQ
+          [WASM_EXPORTS.yawLockSpeedSq]: yls
         };
       }
     }

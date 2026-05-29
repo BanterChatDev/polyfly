@@ -23,7 +23,6 @@ export const WHEEL = { stride: 284, count: 4, frictionSlip: 228 };
 export const STOCK = {
   engineForce:   4000,
   friction:      3,
-  yawLockSpeed:  4000,
 };
 
 export const CMD_BUFFER = { capacity: 128 };
