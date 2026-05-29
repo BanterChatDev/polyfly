@@ -14,6 +14,7 @@ export const WASM_EXPORTS = {
   cmdBufCount:     "B",
   wheelArrayBase:  "C",
   frictionSlip:    "y",
+  antiFlip:        "D",
 };
 
 export const WHEEL = { stride: 284, count: 4, frictionSlip: 228 };
