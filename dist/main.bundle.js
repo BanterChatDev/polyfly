@@ -7977,9 +7977,7 @@
     cmdBufBase: "A",
     cmdBufCount: "B",
     wheelArrayBase: "C",
-    // vehicle.+144, captured each tick (mutable i32)
     frictionSlip: "y"
-    // m_frictionSlip applied to every wheel each tick (mutable f32)
   };
   var STOCK = { engineForce: 4e3, friction: 3 };
 
