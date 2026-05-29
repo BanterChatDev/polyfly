@@ -8,12 +8,28 @@ export function SettingSlider({ featureName, settingKey, def, value }) {
   const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
 
   const [text, setText] = useState(String(value));
-  useEffect(() => { setText(String(value)); }, [value]);
+
+  useEffect(() => {
+    setText(String(value));
+  }, [value]);
 
   const commit = (raw) => {
-    const n = Number(raw);
-    if (raw.trim() === "" || Number.isNaN(n)) { setText(String(value)); return; }
-    const clamped = n > max ? max : n < min ? min : n;
+    const clean = String(raw).trim();
+
+    if (clean === "") {
+      setText(String(value));
+      return;
+    }
+
+    const n = Number(clean);
+
+    if (!Number.isFinite(n)) {
+      setText(String(value));
+      return;
+    }
+
+    const clamped = Math.max(min, Math.min(max, n));
+
     polyfly.setFeatureValue(featureName, settingKey, clamped);
     setText(String(clamped));
   };
@@ -23,16 +39,31 @@ export function SettingSlider({ featureName, settingKey, def, value }) {
       <div className="flex justify-between items-center mb-1.5 text-[12px] text-pf-text-dim">
         <span>{def.label || settingKey}</span>
         <input
-          type="text"
+          type="number"
           inputMode="decimal"
+          min={min}
+          max={max}
+          step={step}
           value={text}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          onChange={(e) => setText(e.target.value)}
-          onBlur={(e) => commit(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") { commit(e.target.value); e.target.blur(); }
-            else if (e.key === "Escape") { setText(String(value)); e.target.blur(); }
+            e.stopPropagation();
+
+            if (e.key === "Enter") {
+              commit(e.currentTarget.value);
+              e.currentTarget.blur();
+            } else if (e.key === "Escape") {
+              setText(String(value));
+              e.currentTarget.blur();
+            }
           }}
+          onChange={(e) => {
+            e.stopPropagation();
+            setText(e.target.value);
+          }}
+          onBlur={(e) => commit(e.target.value)}
           className="w-16 bg-transparent text-right font-mono text-pf-text outline-none border-b border-transparent focus:border-pf-accent/50 focus:text-pf-accent transition-colors"
         />
       </div>

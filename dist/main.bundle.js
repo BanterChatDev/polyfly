@@ -8823,12 +8823,17 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
       setText(String(value));
     }, [value]);
     const commit = (raw) => {
-      const n = Number(raw);
-      if (raw.trim() === "" || Number.isNaN(n)) {
+      const clean = String(raw).trim();
+      if (clean === "") {
         setText(String(value));
         return;
       }
-      const clamped = n > max ? max : n < min ? min : n;
+      const n = Number(clean);
+      if (!Number.isFinite(n)) {
+        setText(String(value));
+        return;
+      }
+      const clamped = Math.max(min, Math.min(max, n));
       polyfly.setFeatureValue(featureName, settingKey, clamped);
       setText(String(clamped));
     };
@@ -8838,21 +8843,30 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
           "input",
           {
-            type: "text",
+            type: "number",
             inputMode: "decimal",
+            min,
+            max,
+            step,
             value: text,
+            onPointerDown: (e) => e.stopPropagation(),
+            onMouseDown: (e) => e.stopPropagation(),
             onClick: (e) => e.stopPropagation(),
-            onChange: (e) => setText(e.target.value),
-            onBlur: (e) => commit(e.target.value),
             onKeyDown: (e) => {
+              e.stopPropagation();
               if (e.key === "Enter") {
-                commit(e.target.value);
-                e.target.blur();
+                commit(e.currentTarget.value);
+                e.currentTarget.blur();
               } else if (e.key === "Escape") {
                 setText(String(value));
-                e.target.blur();
+                e.currentTarget.blur();
               }
             },
+            onChange: (e) => {
+              e.stopPropagation();
+              setText(e.target.value);
+            },
+            onBlur: (e) => commit(e.target.value),
             className: "w-16 bg-transparent text-right font-mono text-pf-text outline-none border-b border-transparent focus:border-pf-accent/50 focus:text-pf-accent transition-colors"
           }
         )
