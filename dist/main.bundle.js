@@ -7978,9 +7978,14 @@
     cmdBufCount: "B",
     wheelArrayBase: "C",
     frictionSlip: "y",
-    antiFlip: "D"
+    antiFlip: "D",
+    yawLockSpeedSq: "E"
   };
-  var STOCK = { engineForce: 4e3, friction: 3 };
+  var STOCK = {
+    engineForce: 4e3,
+    friction: 3,
+    yawLockSpeed: 4e3
+  };
 
   // src/api/physics.js
   var workers = /* @__PURE__ */ new Set();
@@ -9215,6 +9220,7 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
   };
 
   // src/features/mach.js
+  var YAW_LOCK_SPEED_SQ = (STOCK.yawLockSpeed / 3.6) ** 2;
   var mach = {
     name: "mach",
     label: "Mach",
@@ -9233,7 +9239,8 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
         const flip = m.active && m.antiFlip ? 1 : 0;
         return {
           [WASM_EXPORTS.engineForceMach]: force,
-          [WASM_EXPORTS.antiFlip]: flip
+          [WASM_EXPORTS.antiFlip]: flip,
+          [WASM_EXPORTS.yawLockSpeedSq]: YAW_LOCK_SPEED_SQ
         };
       }
     }
@@ -9348,26 +9355,24 @@ __pfRealImportScripts(URL.createObjectURL(new Blob([__pfSrc], { type: "applicati
   };
 
   // src/features/slippy.js
-  var MAX_GRIP = 30;
   var LOCK_VALUE = 1e6;
   var slippy = {
     name: "slippy",
     label: "Slippy",
-    description: "Wheel grip control. Low = ice/drift, high = locked. Slider at max = infinite grip (no slip ever)",
+    description: "Wheel grip control. Low = ice/drift. Max grip = infinite (no slip ever)",
     category: "Movement",
     toggleKey: KEYS.slippy,
     settings: {
-      grip: { type: "number", label: "Grip (max = \u221E lock)", min: 0, max: MAX_GRIP, step: 0.1, default: 0.2 }
+      grip: { type: "number", label: "Grip (lower = slippier)", min: 0, max: 25, step: 0.05, default: 0.2 },
+      lock: { type: "bool", label: "Max grip (\u221E)", default: false }
     },
     onState(state2) {
-      const s = state2.slippy || { active: false, grip: STOCK.friction };
+      const s = state2.slippy || { active: false, grip: STOCK.friction, lock: false };
       if (!s.active) {
         physics.resetFriction();
         return;
       }
-      const g = Number(s.grip) || 0;
-      const v = g >= MAX_GRIP ? LOCK_VALUE : g;
-      physics.setFriction(v);
+      physics.setFriction(s.lock ? LOCK_VALUE : Number(s.grip));
     }
   };
 

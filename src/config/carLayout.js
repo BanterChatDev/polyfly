@@ -8,16 +8,22 @@ export const CAR_OFFSETS = {
 };
 
 export const WASM_EXPORTS = {
-  engineForceMach: "x",
-  carPtr:          "z",
-  cmdBufBase:      "A",
-  cmdBufCount:     "B",
-  wheelArrayBase:  "C",
-  frictionSlip:    "y",
-  antiFlip:        "D",
+  engineForceMach:  "x",
+  carPtr:           "z",
+  cmdBufBase:       "A",
+  cmdBufCount:      "B",
+  wheelArrayBase:   "C",
+  frictionSlip:     "y",
+  antiFlip:         "D",
+  yawLockSpeedSq:   "E",
 };
 
 export const WHEEL = { stride: 284, count: 4, frictionSlip: 228 };
 
-export const STOCK = { engineForce: 4000, friction: 3 };
+export const STOCK = {
+  engineForce:   4000,
+  friction:      3,
+  yawLockSpeed:  4000,
+};
+
 export const CMD_BUFFER = { capacity: 128 };

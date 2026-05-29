@@ -1,6 +1,8 @@
 import { KEYS } from "../config/keys.js";
 import { STOCK, WASM_EXPORTS } from "../config/carLayout.js";
 
+const YAW_LOCK_SPEED_SQ = (STOCK.yawLockSpeed / 3.6) ** 2;
+
 export const mach = {
   name: "mach",
   label: "Mach",
@@ -20,6 +22,7 @@ export const mach = {
       return {
         [WASM_EXPORTS.engineForceMach]: force,
         [WASM_EXPORTS.antiFlip]:        flip,
+        [WASM_EXPORTS.yawLockSpeedSq]:  YAW_LOCK_SPEED_SQ,
       };
     },
   },
